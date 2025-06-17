@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Encrypto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <script src="./wordList.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3">
+        <div class="container-md">
+            <div class="mx-auto">
+                <a class="navbar-brand" href="#">Encrypto</a>
+            </div>
+        </div>
+    </nav>
+    <div id="formContainer" style="display: none;">
+        <div class="container-md">
+            <!-- nav bar -->
+            <div class="row">
+                <div class="col"></div>
+                <div class="col">
+                    <div class="card">
+
+                        <form class="card-body">
+                            <div class="mb-3">
+                                <label for="seedInput" class="form-label">Seed:</label>
+                                <input type="text" class="form-control" id="seedInput" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Side:</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="side1" name="sideInput"
+                                            value="black" checked>
+                                        <label class="form-check-label" for="side1">Black</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="side2" name="sideInput"
+                                            value="white">
+                                        <label class="form-check-label" for="side2">White</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary w-100" onclick="generateGrid()">Submit</button>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid container (initially hidden) -->
+    <!-- <div id="gameContainer" style="display: none;"> -->
+    <div class="container-lg px-5 ">
+        <div class="row g-2 justify-content-center" id="grid">
+            <div class="col-sm-12 col-md-5 col-lg-3">
+                <div class="card">
+                    <div class="card-body border border-5 rounded">
+                        <div class="card-title align-items-center px-0 px-md-0 py-0 py-md-1">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge text-bg-secondary">1</span>
+                                <span class="fw-bold text-uppercase text-center ms-2 w-100">BIGLONGWORD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-5 col-lg-3">
+                <div class="card">
+                    <div class="card-body border border-5 rounded">
+                        <div class="card-title align-items-center px-0 px-md-0 py-0 py-md-1">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge text-bg-secondary">1</span>
+                                <span class="fw-bold text-uppercase text-center ms-2 w-100">BIGLONGWORD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-5 col-lg-3">
+                <div class="card">
+                    <div class="card-body border border-5 rounded">
+                        <div class="card-title align-items-center px-0 px-md-0 py-0 py-md-1">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge text-bg-secondary">1</span>
+                                <span class="fw-bold text-uppercase text-center ms-2 w-100">BIGLONGWORD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-5 col-lg-3">
+                <div class="card">
+                    <div class="card-body border border-5 rounded">
+                        <div class="card-title align-items-center px-0 px-md-0 py-0 py-md-1">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge text-bg-secondary">1</span>
+                                <span class="fw-bold text-uppercase text-center ms-2 w-100">BIGLONGWORD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="gameContainer">
+    </div>
+
+    <script>
+        // Simple linear congruential generator for demonstration
+        // It uses the seed string to produce a pseudo-random sequence
+        function lcg(seedString, callCount) {
+            // Convert seed string into an initial numeric state
+            let state = 0;
+            for (let i = 0; i < seedString.length; i++) {
+                state = (state * 31 + seedString.charCodeAt(i)) % 2147483647;
+            }
+
+            // Advance the generator 'callCount' times
+            for (let j = 0; j < callCount; j++) {
+                // LCG parameters (example values)
+                state = (state * 1664525 + 1013904223) % 4294967296;
+            }
+
+            return state;
+        }
+
+        function generateGrid() {
+            // 1. Gather input values
+            const seed = document.getElementById('seedInput').value;
+            const side = document.querySelector('input[name="sideInput"]:checked').value;
+
+            // Hide the form
+            document.getElementById('formContainer').style.display = 'none';
+
+            // Show the grid container
+            const gameContainer = document.getElementById('gameContainer');
+            gameContainer.style.display = 'block';
+
+            const grid = document.getElementById('grid');
+
+            // Clear any old cells if the function is called multiple times
+            grid.innerHTML = '';
+
+            // 2. Generate a list of 8 random numbers from 0 to wordList.length - 1
+            const randomNumbers = [];
+            for (let i = 0; i < 8; i++) {
+                let randomIndex;
+                do {
+                    randomIndex = lcg(seed, i) % wordList.length;
+                } while (randomNumbers.includes(randomIndex));
+                randomNumbers.push(randomIndex);
+            }
+
+            // Optionally, do something with 'side' if needed:
+            console.log("Seed:", seed, "| Side:", side);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
